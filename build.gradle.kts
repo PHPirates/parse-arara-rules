@@ -1,33 +1,19 @@
-group = "deltadak"
-version = "0.0"
-
 plugins {
 
-    val kotlinVersion = "1.4.0"
+    val kotlinVersion = "1.5.0-M2"
 
     application
     kotlin("jvm") version kotlinVersion
     java // Required by at least JUnit.
 
     // Plugin which checks for dependency updates with help/dependencyUpdates task.
-    id("com.github.ben-manes.versions") version "0.36.0"
+    id("com.github.ben-manes.versions") version "0.38.0"
 
     // Plugin which can update Gradle dependencies, use help/useLatestVersions
-    id("se.patrikerdes.use-latest-versions") version "0.2.15"
+    id("se.patrikerdes.use-latest-versions") version "0.2.16"
 
-    // Test coverage
-    jacoco
+    kotlin("plugin.serialization") version "1.5.0-M2"
 
-    // Upload jacoco coverage reports to coveralls
-    id("com.github.nbaztec.coveralls-jacoco") version "1.2.10"
-
-    // https://openjfx.io/openjfx-docs/#gradle
-    id("org.openjfx.javafxplugin") version "0.0.9"
-}
-
-javafx {
-    version = "14"
-    modules = listOf("javafx.controls")
 }
 
 dependencies {
@@ -38,25 +24,18 @@ dependencies {
     implementation(kotlin("test"))
     implementation(kotlin("test-junit"))
 
-    // JUnit 5
-    testImplementation("org.junit.jupiter:junit-jupiter-api:5.7.0")
-    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.7.0")
-    testRuntimeOnly("org.junit.platform:junit-platform-console:1.7.0")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-runtime:1.0-M1-1.4.0-rc-218")
+    implementation("com.charleskorn.kaml:kaml:0.30.0")
 
-    // Kotlintest
-    testImplementation("io.kotlintest:kotlintest-core:3.4.2")
-    testImplementation("io.kotlintest:kotlintest-assertions:3.4.2")
-    testImplementation("io.kotlintest:kotlintest-runner-junit5:3.4.2")
+    implementation(files("lib/arara-api-jvm-7.0.0-SNAPSHOT.jar"))
+    implementation(files("lib/arara-cli-jvm-7.0.0-SNAPSHOT.jar"))
+    implementation(files("lib/arara-mvel-jvm-7.0.0-SNAPSHOT.jar"))
+    implementation(files("lib/arara-core-jvm-7.0.0-SNAPSHOT.jar"))
 
-    // JavaFX tests using TestFX
-    testImplementation("org.testfx:testfx-core:4.0.16-alpha")
-    testImplementation("org.testfx:testfx-junit:4.0.16-alpha")
-    // Only needed for headless testing.
-//    testImplementation("org.testfx:openjfx-monocle:8u76-b04") // jdk-9+181 for Java 9
-
-    // Spek
-    testImplementation("org.spekframework.spek2:spek-dsl-jvm:2.0.15")
-    testImplementation("org.spekframework.spek2:spek-runner-junit5:2.0.15")
+    // Transitive dependencies
+    implementation("com.soywiz.korlibs.korio:korio:2.0.9")
+    implementation("org.slf4j:slf4j-api:1.7.30")
+    implementation("io.github.microutils:kotlin-logging:2.0.6")
 }
 
 repositories {
@@ -65,30 +44,9 @@ repositories {
     jcenter()
 }
 
-// Test coverage reporting for coveralls.
-tasks {
-    // Enable xml for coveralls.
-    "jacocoTestReport"(JacocoReport::class) {
-        reports {
-            // To be read by humans
-            html.isEnabled = true
-            // To be read by Coveralls etc.
-            xml.isEnabled = true
-            xml.destination = file("$buildDir/reports/jacoco/test/jacocoTestReport.xml")
-        }
-
+tasks.compileKotlin {
+    kotlinOptions {
+        languageVersion = "1.5"
+        apiVersion = "1.5"
     }
-
-    // Trying to run tests every time.
-    val test by tasks
-    val cleanTest by tasks
-    test.dependsOn(cleanTest)
-
-    // Use the built-in JUnit support of Gradle.
-    "test"(Test::class) {
-        useJUnitPlatform()
-    }
-
-    // Sorry, I have no idea.
-    Unit
 }
