@@ -27,10 +27,10 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-runtime:1.0-M1-1.4.0-rc-218")
     implementation("com.charleskorn.kaml:kaml:0.30.0")
 
-    implementation(files("lib/arara-api-jvm-7.0.0-SNAPSHOT.jar"))
-    implementation(files("lib/arara-cli-jvm-7.0.0-SNAPSHOT.jar"))
-    implementation(files("lib/arara-mvel-jvm-7.0.0-SNAPSHOT.jar"))
-    implementation(files("lib/arara-core-jvm-7.0.0-SNAPSHOT.jar"))
+    implementation("org.islandoftex.arara:arara-api:6.1.0")
+    implementation("org.islandoftex.arara:arara-cli:6.1.0")
+    implementation("org.islandoftex.arara:arara-mvel:6.1.0")
+    implementation("org.islandoftex.arara:arara-core:6.1.0")
 
     // Transitive dependencies
     implementation("com.soywiz.korlibs.korio:korio:2.0.9")
@@ -38,10 +38,23 @@ dependencies {
     implementation("io.github.microutils:kotlin-logging:2.0.6")
 }
 
+val gitLabPrivateToken: String by project
+
 repositories {
     mavenCentral()
     mavenLocal()
     jcenter()
+    maven {
+        url = uri("https://gitlab.com/api/v4/groups/org.islandoftex.arara/-/packages/maven")
+        name = "GitLab"
+        credentials(HttpHeaderCredentials::class) {
+            name = "Private-Token"
+            value = gitLabPrivateToken
+        }
+        authentication {
+            create<HttpHeaderAuthentication>("header")
+        }
+    }
 }
 
 tasks.compileKotlin {
