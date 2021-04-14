@@ -38,23 +38,25 @@ dependencies {
     implementation("io.github.microutils:kotlin-logging:2.0.6")
 }
 
-val gitLabPrivateToken: String by project
-
 repositories {
-    mavenCentral()
-    mavenLocal()
-    jcenter()
     maven {
-        url = uri("https://gitlab.com/api/v4/groups/org.islandoftex.arara/-/packages/maven")
+        // As shown on GitLab
+        url = uri("https://gitlab.com/api/v4/projects/14349047/packages/maven")
+        // Also not working:
+//        url = uri("https://gitlab.com/api/v4/projects/1512074/packages/maven")
+//        url = uri("https://gitlab.com/api/v4/groups/org.islandoftex.arara/-/packages/maven")
         name = "GitLab"
         credentials(HttpHeaderCredentials::class) {
             name = "Private-Token"
-            value = gitLabPrivateToken
+            value = properties["gitLabPrivateToken"] as String
         }
         authentication {
             create<HttpHeaderAuthentication>("header")
         }
     }
+    mavenCentral()
+    mavenLocal()
+    jcenter()
 }
 
 tasks.compileKotlin {
