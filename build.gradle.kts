@@ -39,6 +39,7 @@ dependencies {
 }
 
 repositories {
+    // Based on https://docs.gitlab.com/ee/user/packages/maven_repository/#authenticate-to-the-package-registry-with-maven
     maven {
         // As shown on GitLab
         url = uri("https://gitlab.com/api/v4/projects/14349047/packages/maven")
@@ -48,6 +49,7 @@ repositories {
         name = "GitLab"
         credentials(HttpHeaderCredentials::class) {
             name = "Private-Token"
+            // From a gradle.properties file
             value = properties["gitLabPrivateToken"] as String
         }
         authentication {
